@@ -6,35 +6,62 @@ import requests
 
 app = Flask(__name__)
 
+def obtenerValores(idValue):
+
+    # Definicion de Request / BS4
+    arrayElements = []
+    page = requests.get("http://www.bcv.org.ve");
+    soup = BeautifulSoup(page.content, 'html.parser')
+    dolarContenedor = soup.find(id=idValue)
+    elements = dolarContenedor.find_all(class_="centrado")
+
+    # For in
+    for item in elements:
+        arrayElements.append(item.find("strong").get_text())
+    
+    # Variables
+    convertido = arrayElements[1].replace(".", "").replace(",", ".").strip()
+    convertido = float(convertido)
+    convertido = round(convertido, 5)
+    sinConvertir = arrayElements[0].replace(".", "").replace(",", ".").strip()
+
+    # Creacion de diccionario.
+    diccionarioValores = {
+        idValue: {
+            "SIN_CONVERTIR": sinConvertir,
+            "CONVERTIDO": convertido,
+            "SIN_CONVERTIR_VISUAL": arrayElements[0]
+        }
+    }
+
+    # Return valores de diccionario.
+    return diccionarioValores
+
+
 @app.route('/', methods=['GET'])
 def index():
 
-   # try:
+    try:
 
-        # DECLARACIONES
-        page = requests.get("http://www.bcv.org.ve");
-        soup = BeautifulSoup(page.content, 'html.parser')
-        dolarContenedor = soup.find(id="dolar")
-        elements = dolarContenedor.find_all(class_="centrado")
-        dolarValues = []
+        dolar = obtenerValores("dolar")
+        euro = obtenerValores("euro")
+        yuan = obtenerValores("yuan")
 
-        #FOR
-        for item in elements:
-            dolarValues.append(item.find("strong").get_text())
-       
-        #JSON
-        dolar = {
-        'dolar': {
-            'SIN_CONVERTIR': dolarValues[0],
-            'CONVERTDO': dolarValues[1]
+        monedas = {**dolar, **euro, **yuan}
+
+        return jsonify(monedas)
+
+    except:
+
+        # Error mensaje
+        errorValue = {
+        'error': {
+            'mensaje': 'No se pudo comunicar con el proveedor.',
+            'status': 500
             }
         }  
 
-        return jsonify(dolar)
-
-   # except:
-
-    #    return "Error"
+        return jsonify(errorValue)
 
 @app.route('/demo')
 def demo():
