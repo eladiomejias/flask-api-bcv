@@ -1,4 +1,6 @@
 {
     "python.linting.pylintEnabled": true,
-    "python.linting.enabled": true
+    "python.linting.enabled": true,
+    "appService.defaultWebAppToDeploy": "/subscriptions/b46ca1a2-2d7a-4fe8-a496-b3a881a228ea/resourceGroups/appsvc_linux_centralus/providers/Microsoft.Web/sites/flask-api-bcv",
+    "appService.deploySubpath": "."
 }
