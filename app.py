@@ -20,17 +20,18 @@ def obtenerValores(idValue):
         arrayElements.append(item.find("strong").get_text())
     
     # Variables
-    convertido = arrayElements[1].replace(".", "").replace(",", ".").strip()
+    convertido = arrayElements[0].replace(".", "").replace(",", ".").strip()
     convertido = float(convertido)
     convertido = round(convertido, 5)
-    sinConvertir = arrayElements[0].replace(".", "").replace(",", ".").strip()
+    #sinConvertir = arrayElements[0].replace(".", "").replace(",", ".").strip()
 
     # Creacion de diccionario.
     diccionarioValores = {
         idValue: {
-            "SIN_CONVERTIR": sinConvertir,
-            "CONVERTIDO": convertido,
-            "SIN_CONVERTIR_VISUAL": arrayElements[0]
+            #"SIN_CONVERTIR": sinConvertir,
+            "CONVERTIDO": arrayElements[0].strip(),
+            "VALOR": convertido
+            #"SIN_CONVERTIR_VISUAL": arrayElements[0]
         }
     }
 
@@ -47,9 +48,10 @@ def index():
         euro = obtenerValores("euro")
         yuan = obtenerValores("yuan")
 
-        monedas = {**dolar, **euro, **yuan}
+        monedas = { **dolar , **euro, **yuan}
 
         return jsonify(monedas)
+        #return "Good"
 
     except:
 
